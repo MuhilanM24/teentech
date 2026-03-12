@@ -1,4 +1,4 @@
-f<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -447,17 +447,15 @@ f<!DOCTYPE html>
       getFirestore, doc, getDoc, setDoc, collection, getDocs
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-
-
- const firebaseConfig = {
-  apiKey: "AIzaSyCPGGIxODMjGg8trbRGHtg_5IKNu16nbhk",
-  authDomain: "data-collection-a2b76.firebaseapp.com",
-  projectId: "data-collection-a2b76",
-  storageBucket: "data-collection-a2b76.firebasestorage.app",
-  messagingSenderId: "427840961033",
-  appId: "1:427840961033:web:ad6d80c47893a3774f96d8",
-  measurementId: "G-XR123ZNZSG"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyCPGGIxODMjGg8trbRGHtg_5IKNu16nbhk",
+      authDomain: "data-collection-a2b76.firebaseapp.com",
+      projectId: "data-collection-a2b76",
+      storageBucket: "data-collection-a2b76.firebasestorage.app",
+      messagingSenderId: "427840961033",
+      appId: "1:427840961033:web:ad6d80c47893a3774f96d8",
+      measurementId: "G-XR123ZNZSG"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -527,6 +525,8 @@ f<!DOCTYPE html>
     let authMode = "login";
     let emailMode = "login";
 
+    const adminEmails = ["25it067@rmkecac.in"]; // your admin email
+
     signupChoiceBtn.onclick = () => {
       authMode = "signup";
       welcomeScreen.classList.add("hidden");
@@ -563,7 +563,7 @@ f<!DOCTYPE html>
 
     googleBtn.onclick = async () => {
       try {
-        await signInWithPopup(auth, googleProvider); 
+        await signInWithPopup(auth, googleProvider);
       } catch (err) {
         alert("Google auth error: " + err.message);
       }
@@ -593,9 +593,9 @@ f<!DOCTYPE html>
       }
       try {
         if (emailMode === "signup") {
-          await createUserWithEmailAndPassword(auth, email, password); 
+          await createUserWithEmailAndPassword(auth, email, password);
         } else {
-          await signInWithEmailAndPassword(auth, email, password); 
+          await signInWithEmailAndPassword(auth, email, password);
         }
         emailModal.classList.add("hidden");
         emailInput.value = "";
@@ -626,9 +626,7 @@ f<!DOCTYPE html>
         return;
       }
 
-      const token = await user.getIdTokenResult(true);
-      const adminEmails = ["25it067@rmkecac.in"]; // change to your email
-          const isAdmin = adminEmails.includes(user.email);
+      const isAdmin = adminEmails.includes(user.email);
 
       userEmail.textContent = user.email;
       userAvatar.textContent = user.email[0].toUpperCase();
@@ -693,8 +691,10 @@ f<!DOCTYPE html>
         renderProfile(profile, user.email);
         profileForm.classList.add("hidden");
         profileDisplay.classList.remove("hidden");
-        const token = await user.getIdTokenResult();
-        if (token.claims.admin) await loadEmployees(); 
+
+        if (adminEmails.includes(user.email)) {
+          await loadEmployees();
+        }
       } catch (err) {
         alert("Save error: " + err.message);
       } finally {
@@ -753,6 +753,3 @@ f<!DOCTYPE html>
   </script>
 </body>
 </html>
-
-
-

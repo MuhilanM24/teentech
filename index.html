@@ -1,205 +1,443 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Employee Profile with Google Login & Cloud</title>
+  <title>Teantech Employee Portal - Ultimate UI</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: Arial, sans-serif;
-      max-width: 900px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
-      background: #f4f4f4;
     }
-    h1 {
+    .header {
       text-align: center;
-      color: #333;
+      color: rgb(21, 18, 18);
+      margin-bottom: 40px;
+    }
+    .header h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
     }
     .top-bar {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 20px 30px;
+      margin: 0 auto 30px auto;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      background: #fff;
-      padding: 10px 15px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      justify-content: center;
+      gap: 30px;
+      max-width: 600px;
     }
-    .top-bar span {
-      font-size: 14px;
-      color: #555;
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    button {
-      background: #007bff;
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: white;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    button:disabled {
-      background: #999;
-      cursor: not-allowed;
-    }
-    form, .profile, .admin-section {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    form h2, form h3 {
-      margin-top: 0;
-      color: #333;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 1.2rem;
     }
-    input, select, textarea {
+    .role-badge {
+      background: linear-gradient(45deg, #ff6b6b, #feca57);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    .auth-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: rgb(25, 2, 2);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      backdrop-filter: blur(10px);
+    }
+    .btn-cancel {
+  background: #e74c3c;        /* red */
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: #c0392b;
+}
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    .btn-email {
+      background: linear-gradient(45deg, #11998e, #38ef7d);
+      color: rgb(232, 224, 224);
+    }
+    .btn-email:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(17, 153, 142, 0.6);
+    }
+    .email-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 8px 10px;
-      margin-top: 5px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
     }
-    textarea {
-      resize: vertical;
+    .email-modal.hidden {
+      display: none;
     }
-    .actions {
-      margin-top: 15px;
+    .modal-card {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     }
-    .profile h2 {
-      margin-top: 0;
+    .modal-title {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
       color: #333;
+      text-align: center;
     }
-    .profile p {
-      margin: 6px 0;
-      font-size: 14px;
+    .modal-input {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 2px solid #e1e5e9;
+      border-radius: 16px;
+      font-size: 1rem;
     }
-    .note {
-      font-size: 12px;
-      color: #777;
-      margin-top: 5px;
+    .modal-input:focus {
+      outline: none;
+      border-color: #11998e;
     }
-    .admin-section h3 {
-      margin-top: 0;
+    .modal-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
     }
-    .admin-list-item {
-      border-bottom: 1px solid #eee;
-      padding: 8px 0;
-      font-size: 14px;
+    .card {
+      background: rgba(116, 16, 16, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .form-group {
+      margin-bottom: 25px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+      font-size: 0.95rem;
+    }
+    .form-input {
+      width: 100%;
+      padding: 15px 20px;
+      border: 2px solid #e1e5e9;
+      border-radius: 16px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: rgba(17, 7, 7, 0.8);
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+      transform: translateY(-1px);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .section-title {
+      font-size: 1.8rem;
+      margin: 0 0 25px 0;
+      color: #333;
+      position: relative;
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      border-radius: 2px;
+    }
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+    }
+    .profile-card {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 25px;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+    .profile-card h3 {
+      margin-bottom: 15px;
+      font-size: 1.4rem;
+    }
+    .profile-field {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 12px;
+    }
+    .profile-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+    }
+    .hidden {
+      display: none !important;
+    }
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .top-bar {
+        flex-direction: column;
+        gap: 15px;
+      }
+      .auth-buttons {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Employee Profile Management (Cloud + Google Login)</h1>
-
-  <!-- Top bar: login status -->
-  <div class="top-bar">
-    <div>
-      <button id="loginBtn">Sign in with Google</button>
-      <button id="logoutBtn" style="display:none;">Logout</button>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-users-cog"></i> Teantech Employee Portal</h1>
+      <p>Ultimate HR Management System</p>
     </div>
-    <span id="userInfo">Not logged in</span>
+
+    <!-- Centered Login Portal with Email + Google -->
+    <div class="top-bar">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <span id="userInfo">Not logged in</span>
+        <span class="role-badge hidden" id="roleBadge">ADMIN</span>
+      </div>
+      <div class="auth-buttons">
+        <button class="btn btn-primary" id="loginGoogleBtn">
+          <i class="fab fa-google"></i> Google
+        </button>
+        <button class="btn btn-email" id="loginEmailBtn">
+          <i class="fas fa-envelope"></i> Email
+        </button>
+        <button class="btn btn-secondary hidden" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Email Login Modal -->
+    <div class="email-modal hidden" id="emailModal">
+      <div class="modal-card">
+        <h2 class="modal-title" id="modalTitle">Login with Email</h2>
+        <form id="emailForm">
+          <input class="modal-input" type="email" id="emailInput" placeholder="Enter your email" required />
+          <input class="modal-input" type="password" id="passwordInput" placeholder="Enter your password" required />
+          <div class="modal-buttons">
+            <button type="submit" class="btn btn-primary" id="emailSubmitBtn">Login</button>
+<button type="button" class="btn btn-cancel" id="emailCancelBtn">Cancel</button>
+
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Profile Form -->
+    <form class="card hidden" id="employeeForm">
+      <h2 class="section-title">
+        <i class="fas fa-user-edit"></i> Employee Profile
+      </h2>
+      <p style="color: #666; margin-bottom: 30px;">Your profile is securely saved to Firestore cloud.</p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="name">Full Name</label>
+          <input class="form-input" type="text" id="name" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="dob">Date of Birth</label>
+          <input class="form-input" type="date" id="dob" required />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="email">Personal Email</label>
+          <input class="form-input" type="email" id="email" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone">Phone</label>
+          <input class="form-input" type="tel" id="phone" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="address">Address</label>
+        <textarea class="form-input" id="address" rows="3" required></textarea>
+      </div>
+
+      <h3 class="section-title" style="margin-top: 40px;">
+        <i class="fas fa-briefcase"></i> Official Details
+      </h3>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="empId">Employee ID</label>
+          <input class="form-input" type="text" id="empId" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="department">Department</label>
+          <select class="form-input" id="department" required>
+            <option value="">Select Department</option>
+            <option value="IT">IT</option>
+            <option value="HR">HR</option>
+            <option value="Finance">Finance</option>
+            <option value="Marketing">Marketing</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="position">Position</label>
+          <input class="form-input" type="text" id="position" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="joiningDate">Joining Date</label>
+          <input class="form-input" type="date" id="joiningDate" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="salary">Salary (₹)</label>
+        <input class="form-input" type="number" id="salary" required />
+      </div>
+
+      <div class="actions" style="text-align: center; margin-top: 40px;">
+        <button class="btn btn-primary" type="submit" style="font-size: 1.1rem; padding: 16px 40px;">
+          <i class="fas fa-save"></i> Save to Cloud
+        </button>
+      </div>
+    </form>
+
+    <!-- Own Profile Display -->
+    <div class="card hidden" id="profileDisplay">
+      <h2 class="section-title">
+        <i class="fas fa-user-circle"></i> My Profile
+      </h2>
+      <div id="profileDetails" style="font-size: 1.1rem; line-height: 1.6;"></div>
+      <div style="text-align: center; margin-top: 30px;">
+        <button class="btn btn-primary" id="editBtn">
+          <i class="fas fa-edit"></i> Edit Profile
+        </button>
+      </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="card hidden" id="adminSection">
+      <h2 class="section-title">
+        <i class="fas fa-users"></i> All Employee Profiles
+      </h2>
+      <p style="color: #666; margin-bottom: 30px;">Admin dashboard - view all employee data.</p>
+      <div id="adminList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;"></div>
+    </div>
   </div>
 
-  <!-- Employee form -->
-  <form id="employeeForm" style="display:none;">
-    <h2>Collect Personal & Official Details</h2>
-    <p class="note">Your profile is saved in Firestore under your Google UID.</p>
-
-    <h3>Personal Details</h3>
-
-    <label for="name">Full Name</label>
-    <input type="text" id="name" required />
-
-    <label for="dob">Date of Birth</label>
-    <input type="date" id="dob" required />
-
-    <label for="email">Personal Email</label>
-    <input type="email" id="email" required />
-
-    <label for="phone">Phone</label>
-    <input type="tel" id="phone" required />
-
-    <label for="address">Address</label>
-    <textarea id="address" rows="3" required></textarea>
-
-    <h3>Official Details</h3>
-
-    <label for="empId">Employee ID</label>
-    <input type="text" id="empId" required />
-
-    <label for="department">Department</label>
-    <select id="department" required>
-      <option value="">Select Department</option>
-      <option value="IT">IT</option>
-      <option value="HR">HR</option>
-      <option value="Finance">Finance</option>
-      <option value="Marketing">Marketing</option>
-    </select>
-
-    <label for="position">Position</label>
-    <input type="text" id="position" required />
-
-    <label for="joiningDate">Joining Date</label>
-    <input type="date" id="joiningDate" required />
-
-    <label for="salary">Salary (₹)</label>
-    <input type="number" id="salary" required />
-
-    <div class="actions">
-      <button type="submit">Save Profile to Cloud</button>
-    </div>
-  </form>
-
-  <!-- Display own profile -->
-  <div id="profileDisplay" class="profile" style="display:none;">
-    <h2 id="profileName"></h2>
-    <div id="profileDetails"></div>
-    <div class="actions">
-      <button id="editBtn">Edit Profile</button>
-    </div>
-  </div>
-
-  <!-- Admin / HR section: list all employees -->
-  <div id="adminSection" class="admin-section" style="display:none;">
-    <h3>Admin / HR: All Employee Profiles</h3>
-    <p class="note">Only users with admin claim can see this list.</p>
-    <div id="adminList"></div>
-  </div>
-
-  <!-- Firebase + app script -->
+  <!-- Firebase SDK -->
   <script type="module">
-    // Import Firebase SDK (v10+ modular)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import {
-      getAuth,
-      GoogleAuthProvider,
-      signInWithPopup,
-      signOut,
-      onAuthStateChanged
+      getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged,
+      signInWithEmailAndPassword, createUserWithEmailAndPassword
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import {
-      getFirestore,
-      doc,
-      getDoc,
-      setDoc,
-      collection,
-      getDocs
+      getFirestore, doc, getDoc, setDoc, collection, getDocs
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // TODO: Replace with your firebaseConfig from Firebase console
+    // TODO: REPLACE WITH YOUR CONFIG FROM FIREBASE CONSOLE
 const firebaseConfig = {
   apiKey: "AIzaSyCPGGIxODMjGg8trbRGHtg_5IKNu16nbhk",
   authDomain: "data-collection-a2b76.firebaseapp.com",
@@ -210,194 +448,207 @@ const firebaseConfig = {
   measurementId: "G-XR123ZNZSG"
 };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
     // DOM elements
-    const loginBtn = document.getElementById("loginBtn");
+    const loginGoogleBtn = document.getElementById("loginGoogleBtn");
+    const loginEmailBtn = document.getElementById("loginEmailBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const userInfo = document.getElementById("userInfo");
+    const roleBadge = document.getElementById("roleBadge");
+    const userAvatar = document.getElementById("userAvatar");
     const form = document.getElementById("employeeForm");
-    const profileDiv = document.getElementById("profileDisplay");
-    const profileName = document.getElementById("profileName");
-    const profileDetails = document.getElementById("profileDetails");
-    const editBtn = document.getElementById("editBtn");
+    const profileDisplay = document.getElementById("profileDisplay");
     const adminSection = document.getElementById("adminSection");
     const adminList = document.getElementById("adminList");
+    const editBtn = document.getElementById("editBtn");
 
-    // Form fields
-    const nameInput = document.getElementById("name");
-    const dobInput = document.getElementById("dob");
-    const emailInput = document.getElementById("email");
-    const phoneInput = document.getElementById("phone");
-    const addressInput = document.getElementById("address");
-    const empIdInput = document.getElementById("empId");
-    const deptInput = document.getElementById("department");
-    const positionInput = document.getElementById("position");
-    const joiningDateInput = document.getElementById("joiningDate");
-    const salaryInput = document.getElementById("salary");
+    // Email modal
+    const emailModal = document.getElementById("emailModal");
+    const emailForm = document.getElementById("emailForm");
+    const emailInput = document.getElementById("emailInput");
+    const passwordInput = document.getElementById("passwordInput");
+    const modalTitle = document.getElementById("modalTitle");
+    const emailSubmitBtn = document.getElementById("emailSubmitBtn");
+    const emailCancelBtn = document.getElementById("emailCancelBtn");
+
+    // Form inputs
+    const inputs = {
+      name: document.getElementById("name"),
+      dob: document.getElementById("dob"),
+      email: document.getElementById("email"),
+      phone: document.getElementById("phone"),
+      address: document.getElementById("address"),
+      empId: document.getElementById("empId"),
+      department: document.getElementById("department"),
+      position: document.getElementById("position"),
+      joiningDate: document.getElementById("joiningDate"),
+      salary: document.getElementById("salary")
+    };
 
     // Google Login
-    loginBtn.onclick = async () => {
+    loginGoogleBtn.onclick = async () => {
       try {
-        loginBtn.disabled = true;
+        loginGoogleBtn.disabled = true;
         await signInWithPopup(auth, provider);
       } catch (err) {
-        alert("Login failed: " + err.message);
+        alert("Google login failed: " + err.message);
       } finally {
-        loginBtn.disabled = false;
+        loginGoogleBtn.disabled = false;
       }
     };
 
-    // Logout
+    // Email Login Modal
+    loginEmailBtn.onclick = () => {
+      emailModal.classList.remove("hidden");
+      emailInput.focus();
+    };
+
+    emailCancelBtn.onclick = () => {
+      emailModal.classList.add("hidden");
+      emailForm.reset();
+    };
+
+    // Email Auth
+    emailForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const email = emailInput.value;
+      const password = passwordInput.value;
+
+      try {
+        emailSubmitBtn.disabled = true;
+        emailSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+
+        await signInWithEmailAndPassword(auth, email, password);
+        emailModal.classList.add("hidden");
+      } catch (err) {
+        if (err.code === 'auth/user-not-found') {
+          modalTitle.textContent = "Create Account";
+          emailSubmitBtn.textContent = "Create Account";
+        }
+        alert("Login failed: " + err.message);
+      } finally {
+        emailSubmitBtn.disabled = false;
+        emailSubmitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+        modalTitle.textContent = "Login with Email";
+      }
+    };
+
     logoutBtn.onclick = async () => {
       await signOut(auth);
     };
 
-    // Auth state change
+    // Auth state
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Force token refresh to get latest custom claims (admin)
-        const token = await user.getIdTokenResult(true);
-        const isAdmin = !!token.claims.admin;
+        const tokenResult = await user.getIdTokenResult(true);
+        const isAdmin = !!tokenResult.claims.admin;
 
-        userInfo.textContent = (isAdmin ? "[ADMIN] " : "") + "Logged in as: " + user.email;
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline-block";
-        form.style.display = "block";
+        userInfo.textContent = user.email;
+        userAvatar.textContent = user.email[0].toUpperCase();
+        roleBadge.classList.toggle("hidden", !isAdmin);
+        roleBadge.textContent = isAdmin ? "ADMIN" : "";
 
-        // Load own profile
+        loginGoogleBtn.style.display = "none";
+        loginEmailBtn.style.display = "none";
+        logoutBtn.classList.remove("hidden");
+        form.classList.remove("hidden");
+
         const ref = doc(db, "employees", user.uid);
         const snap = await getDoc(ref);
         if (snap.exists()) {
           const data = snap.data();
           fillForm(data);
-          displayProfile(data);
-        } else {
-          form.reset();
-          profileDiv.style.display = "none";
+          showProfile(data);
         }
 
-        // If admin, show all employees
         if (isAdmin) {
-          await loadAllEmployees();
-          adminSection.style.display = "block";
+          loadAllEmployees();
+          adminSection.classList.remove("hidden");
         } else {
-          adminSection.style.display = "none";
+          adminSection.classList.add("hidden");
         }
       } else {
         userInfo.textContent = "Not logged in";
-        loginBtn.style.display = "inline-block";
-        logoutBtn.style.display = "none";
-        form.style.display = "none";
-        profileDiv.style.display = "none";
-        adminSection.style.display = "none";
+        roleBadge.classList.add("hidden");
+        userAvatar.textContent = "U";
+        loginGoogleBtn.style.display = "inline-flex";
+        loginEmailBtn.style.display = "inline-flex";
+        logoutBtn.classList.add("hidden");
+        form.classList.add("hidden");
+        profileDisplay.classList.add("hidden");
+        adminSection.classList.add("hidden");
       }
     });
 
-    // Save own profile
+    // Profile functions (same as before)
     form.onsubmit = async (e) => {
       e.preventDefault();
       const user = auth.currentUser;
-      if (!user) {
-        alert("Please login with Google first.");
-        return;
-      }
+      if (!user) return alert("Please login");
 
-      const employee = {
+      const profile = {
         uid: user.uid,
         googleEmail: user.email,
-        name: nameInput.value,
-        dob: dobInput.value,
-        email: emailInput.value,
-        phone: phoneInput.value,
-        address: addressInput.value,
-        empId: empIdInput.value,
-        department: deptInput.value,
-        position: positionInput.value,
-        joiningDate: joiningDateInput.value,
-        salary: salaryInput.value
+        ...Object.fromEntries(Object.entries(inputs).map(([k, v]) => [k, v.value]))
       };
 
       try {
-        const ref = doc(db, "employees", user.uid);
-        await setDoc(ref, employee);
-        alert("Profile saved to cloud!");
-        displayProfile(employee);
-
-        // If admin, refresh list
-        const token = await user.getIdTokenResult();
-        if (token.claims.admin) {
-          await loadAllEmployees();
-        }
+        await setDoc(doc(db, "employees", user.uid), profile);
+        alert("✅ Profile saved to cloud!");
+        showProfile(profile);
+        const isAdmin = await auth.currentUser.getIdTokenResult().then(r => !!r.claims.admin);
+        if (isAdmin) loadAllEmployees();
       } catch (err) {
-        alert("Error saving profile: " + err.message);
+        alert("Error: " + err.message);
       }
     };
 
-    // Display own profile
-    function displayProfile(employee) {
-      profileName.textContent = `Profile: ${employee.name}`;
-      profileDetails.innerHTML = `
-        <p><strong>Google Email:</strong> ${employee.googleEmail || ""}</p>
-        <p><strong>Employee ID:</strong> ${employee.empId}</p>
-        <p><strong>Date of Birth:</strong> ${employee.dob}</p>
-        <p><strong>Personal Email:</strong> ${employee.email}</p>
-        <p><strong>Phone:</strong> ${employee.phone}</p>
-        <p><strong>Address:</strong> ${employee.address}</p>
-        <p><strong>Department:</strong> ${employee.department}</p>
-        <p><strong>Position:</strong> ${employee.position}</p>
-        <p><strong>Joining Date:</strong> ${employee.joiningDate}</p>
-        <p><strong>Salary:</strong> ₹${employee.salary}</p>
+    function showProfile(profile) {
+      document.getElementById("profileDetails").innerHTML = `
+        <div class="profile-grid">
+          <div class="profile-field"><i class="fas fa-id-badge profile-icon"></i><strong>Employee ID:</strong> ${profile.empId}</div>
+          <div class="profile-field"><i class="fas fa-calendar profile-icon"></i><strong>DOB:</strong> ${profile.dob}</div>
+          <div class="profile-field"><i class="fas fa-envelope profile-icon"></i><strong>Email:</strong> ${profile.email}</div>
+          <div class="profile-field"><i class="fas fa-phone profile-icon"></i><strong>Phone:</strong> ${profile.phone}</div>
+          <div class="profile-field"><i class="fas fa-building profile-icon"></i><strong>Department:</strong> ${profile.department}</div>
+          <div class="profile-field"><i class="fas fa-chart-line profile-icon"></i><strong>Salary:</strong> ₹${profile.salary}</div>
+        </div>
       `;
-      profileDiv.style.display = "block";
+      profileDisplay.classList.remove("hidden");
     }
 
-    // Fill form
-    function fillForm(emp) {
-      nameInput.value = emp.name || "";
-      dobInput.value = emp.dob || "";
-      emailInput.value = emp.email || "";
-      phoneInput.value = emp.phone || "";
-      addressInput.value = emp.address || "";
-      empIdInput.value = emp.empId || "";
-      deptInput.value = emp.department || "";
-      positionInput.value = emp.position || "";
-      joiningDateInput.value = emp.joiningDate || "";
-      salaryInput.value = emp.salary || "";
+    function fillForm(profile) {
+      Object.entries(profile).forEach(([key, value]) => {
+        if (inputs[key]) inputs[key].value = value;
+      });
     }
 
-    // Edit button
-    editBtn.onclick = () => {
-      form.style.display = "block";
-      window.scrollTo({ top: form.offsetTop - 20, behavior: "smooth" });
-    };
-
-    // Admin: load all employees
     async function loadAllEmployees() {
-      adminList.innerHTML = "Loading all employees...";
+      adminList.innerHTML = '<div>Loading...</div>';
       const snapshot = await getDocs(collection(db, "employees"));
-      if (snapshot.empty) {
-        adminList.textContent = "No employee profiles found.";
-        return;
-      }
-      let html = "";
-      snapshot.forEach((docSnap) => {
+      const html = Array.from(snapshot.docs).map(docSnap => {
         const e = docSnap.data();
-        html += `
-          <div class="admin-list-item">
-            <strong>${e.name || "(no name)"} (${e.empId || "no ID"})</strong><br />
-            Email: ${e.email || ""} | Google: ${e.googleEmail || ""}<br />
-            Dept: ${e.department || ""}, Position: ${e.position || ""}, Salary: ₹${e.salary || ""}<br />
-            Joining: ${e.joiningDate || ""}, Phone: ${e.phone || ""}
+        return `
+          <div class="profile-card">
+            <h3>${e.name || "Unnamed"} <span style="font-size:0.8rem;">(${e.empId})</span></h3>
+            <div class="profile-field"><i class="fas fa-envelope profile-icon"></i> ${e.googleEmail}</div>
+            <div class="profile-field"><i class="fas fa-phone profile-icon"></i> ${e.phone}</div>
+            <div class="profile-field"><i class="fas fa-building profile-icon"></i> ${e.department} - ${e.position}</div>
+            <div class="profile-field"><i class="fas fa-calendar profile-icon"></i> ${e.joiningDate}</div>
+            <div class="profile-field"><i class="fas fa-rupee-sign profile-icon"></i> ₹${e.salary}</div>
           </div>
         `;
-      });
-      adminList.innerHTML = html;
+      }).join("");
+      adminList.innerHTML = html || '<div>No employees found</div>';
     }
+
+    editBtn.onclick = () => {
+      form.scrollIntoView({ behavior: "smooth" });
+    };
   </script>
 </body>
 </html>

@@ -308,11 +308,13 @@
         <div id="userAvatar" class="user-avatar">U</div>
         <div>
           <div id="userEmail" style="font-weight:600;"></div>
-          <!-- <div id="userUid" style="font-size:0.8rem; color:#7f8c8d;"></div> -->
         </div>
         <span id="roleBadge" class="role-badge hidden">ADMIN</span>
       </div>
       <div>
+        <button id="adminViewBtn" class="btn-top btn-edit hidden">
+          <i class="fas fa-users"></i> Admin View
+        </button>
         <button id="editProfileBtn" class="btn-top btn-edit">
           <i class="fas fa-user-edit"></i> Edit
         </button>
@@ -445,7 +447,7 @@
       getFirestore, doc, getDoc, setDoc, collection, getDocs
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
+ const firebaseConfig = {
   apiKey: "AIzaSyCPGGIxODMjGg8trbRGHtg_5IKNu16nbhk",
   authDomain: "data-collection-a2b76.firebaseapp.com",
   projectId: "data-collection-a2b76",
@@ -483,8 +485,8 @@
     const topBar = document.getElementById("topBar");
     const userAvatar = document.getElementById("userAvatar");
     const userEmail = document.getElementById("userEmail");
-    const userUid = document.getElementById("userUid");
     const roleBadge = document.getElementById("roleBadge");
+    const adminViewBtn = document.getElementById("adminViewBtn");
     const editProfileBtn = document.getElementById("editProfileBtn");
     const logoutBtn = document.getElementById("logoutBtn");
 
@@ -605,6 +607,12 @@
       await signOut(auth);
     };
 
+    adminViewBtn.onclick = () => {
+      if (!adminSection.classList.contains("hidden")) {
+        adminSection.scrollIntoView({ behavior: "smooth" });
+      }
+    };
+
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         welcomeScreen.classList.remove("hidden");
@@ -617,12 +625,12 @@
       }
 
       const token = await user.getIdTokenResult(true);
-      const isAdmin = !!token.claims.admin;
+      const isAdmin = !!token.claims.admin; 
 
       userEmail.textContent = user.email;
-      // userUid.textContent = user.uid;
       userAvatar.textContent = user.email[0].toUpperCase();
       roleBadge.classList.toggle("hidden", !isAdmin);
+      adminViewBtn.classList.toggle("hidden", !isAdmin);
 
       welcomeScreen.classList.add("hidden");
       authCard.classList.add("hidden");
@@ -683,7 +691,7 @@
         profileForm.classList.add("hidden");
         profileDisplay.classList.remove("hidden");
         const token = await user.getIdTokenResult();
-        if (token.claims.admin) await loadEmployees();
+        if (token.claims.admin) await loadEmployees(); 
       } catch (err) {
         alert("Save error: " + err.message);
       } finally {
@@ -742,6 +750,3 @@
   </script>
 </body>
 </html>
-
-
-

@@ -620,7 +620,7 @@
       const isAdmin = !!token.claims.admin;
 
       userEmail.textContent = user.email;
-      userUid.textContent = user.uid;
+      // userUid.textContent = user.uid;
       userAvatar.textContent = user.email[0].toUpperCase();
       roleBadge.classList.toggle("hidden", !isAdmin);
 
@@ -742,5 +742,6 @@
   </script>
 </body>
 </html>
+
 
 

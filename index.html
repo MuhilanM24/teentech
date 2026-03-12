@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teantech Employee Portal - Google + Email Auth</title>
+  <title>Teentech Employee Portal</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -247,7 +247,7 @@
   <div class="container">
     <div class="header">
       <h1><i class="fas fa-users-cog"></i> Teantech Employee Portal</h1>
-      <p>Google + Email Login • Employee Profile • Admin View</p>
+      <!-- <p>Google + Email Login • Employee Profile • Admin View</p> -->
     </div>
 
     <div id="welcomeScreen" class="welcome-screen">
@@ -525,7 +525,7 @@
     let authMode = "login";
     let emailMode = "login";
 
-    const adminEmails = ["25it067@rmkecac.in"]; // your admin email
+    const adminEmails = ["25it067@rmkecac.in"]; // put your admin email(s) here
 
     // set min for joining date = today
     const today = new Date();
@@ -533,7 +533,7 @@
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const dd = String(today.getDate()).padStart(2, "0");
     const minDate = `${yyyy}-${mm}-${dd}`;
-    document.getElementById("joiningDate").setAttribute("min", minDate);
+    document.getElementById("joiningDate").setAttribute("min", minDate); [web:166][web:172]
 
     signupChoiceBtn.onclick = () => {
       authMode = "signup";
@@ -633,6 +633,10 @@
         adminSection.classList.add("hidden");
         return;
       }
+
+      // DEBUG LOGS
+      console.log("Signed-in email:", user.email);
+      console.log("isAdmin:", adminEmails.includes(user.email));
 
       const isAdmin = adminEmails.includes(user.email);
 
@@ -761,4 +765,3 @@
   </script>
 </body>
 </html>
-

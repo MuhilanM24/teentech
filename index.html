@@ -334,7 +334,7 @@
         </div>
         <div class="form-group">
           <label class="form-label" for="dob">Date of Birth</label>
-          <input id="dob" class="form-input" type="date" required>
+          <input id="dob" class="form-input" type="date" required min="1900-01-01">
         </div>
       </div>
 
@@ -374,7 +374,7 @@
         </div>
         <div class="form-group">
           <label class="form-label" for="salary">Salary (₹)</label>
-          <input id="salary" class="form-input" type="number" required>
+          <input id="salary" class="form-input" type="number" required min="0">
         </div>
       </div>
 
@@ -526,6 +526,14 @@
     let emailMode = "login";
 
     const adminEmails = ["25it067@rmkecac.in"]; // your admin email
+
+    // set min for joining date = today
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    const minDate = `${yyyy}-${mm}-${dd}`;
+    document.getElementById("joiningDate").setAttribute("min", minDate); [web:166][web:172]
 
     signupChoiceBtn.onclick = () => {
       authMode = "signup";

@@ -32,7 +32,6 @@
       font-size: 1.3rem;
       opacity: 0.9;
     }
-
     .welcome-screen { text-align: center; margin-bottom: 50px; }
     .welcome-buttons {
       display: flex; justify-content: center; gap: 25px; flex-wrap: wrap;
@@ -247,7 +246,6 @@
   <div class="container">
     <div class="header">
       <h1><i class="fas fa-users-cog"></i> Teentech Employee Portal</h1>
-      <!-- <p>Google + Email Login • Employee Profile • Admin View</p> -->
     </div>
 
     <div id="welcomeScreen" class="welcome-screen">
@@ -447,6 +445,7 @@
       getFirestore, doc, getDoc, setDoc, collection, getDocs
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // Your Firebase config (keep as-is but ensure it matches console)
     const firebaseConfig = {
       apiKey: "AIzaSyCPGGIxODMjGg8trbRGHtg_5IKNu16nbhk",
       authDomain: "data-collection-a2b76.firebaseapp.com",
@@ -462,6 +461,7 @@
     const db = getFirestore(app);
     const googleProvider = new GoogleAuthProvider();
 
+    // DOM elements
     const welcomeScreen = document.getElementById("welcomeScreen");
     const authCard = document.getElementById("authCard");
     const authCardTitle = document.getElementById("authCardTitle");
@@ -522,12 +522,13 @@
       address: document.getElementById("address")
     };
 
-    let authMode = "login";
+    let authMode = "login"; // "login" or "signup"
     let emailMode = "login";
 
-    const adminEmails = ["25it067@rmkec.ac.in"]; // put your admin email(s) here
+    // Simple client-side admin list (for UI only)
+    const adminEmails = ["25it067@rmkec.ac.in"];
 
-    // set min for joining date = today
+    // Joining date minimum = today
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, "0");
@@ -535,6 +536,7 @@
     const minDate = `${yyyy}-${mm}-${dd}`;
     document.getElementById("joiningDate").setAttribute("min", minDate);
 
+    // Auth choice buttons
     signupChoiceBtn.onclick = () => {
       authMode = "signup";
       welcomeScreen.classList.add("hidden");
@@ -569,14 +571,17 @@
       switchToSignup.classList.add("hidden");
     };
 
+    // Google auth
     googleBtn.onclick = async () => {
       try {
         await signInWithPopup(auth, googleProvider);
       } catch (err) {
+        console.error(err.code, err.message);
         alert("Google auth error: " + err.message);
       }
     };
 
+    // Email modal
     emailBtn.onclick = () => {
       emailMode = authMode;
       modalTitle.textContent = emailMode === "signup" ? "Sign Up with Email" : "Login with Email";
@@ -595,34 +600,42 @@
     emailActionBtn.onclick = async () => {
       const email = emailInput.value.trim();
       const password = passwordInput.value;
+
       if (!email || !password) {
         alert("Enter email and password");
         return;
       }
+
       try {
+        let userCredential;
         if (emailMode === "signup") {
-          await createUserWithEmailAndPassword(auth, email, password);
+          userCredential = await createUserWithEmailAndPassword(auth, email, password);
         } else {
-          await signInWithEmailAndPassword(auth, email, password);
+          userCredential = await signInWithEmailAndPassword(auth, email, password);
         }
+        console.log("Email auth success:", userCredential.user.uid);
         emailModal.classList.add("hidden");
         emailInput.value = "";
         passwordInput.value = "";
       } catch (err) {
-        alert("Email auth error: " + err.message);
+        console.error("Email auth error:", err.code, err.message);
+        alert("Email auth error: " + err.code + " – " + err.message);
       }
     };
 
+    // Logout
     logoutBtn.onclick = async () => {
       await signOut(auth);
     };
 
+    // Admin view scroll
     adminViewBtn.onclick = () => {
       if (!adminSection.classList.contains("hidden")) {
         adminSection.scrollIntoView({ behavior: "smooth" });
       }
     };
 
+    // Auth state
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         welcomeScreen.classList.remove("hidden");
@@ -633,10 +646,6 @@
         adminSection.classList.add("hidden");
         return;
       }
-
-      // DEBUG LOGS
-      console.log("Signed-in email:", user.email);
-      console.log("isAdmin:", adminEmails.includes(user.email));
 
       const isAdmin = adminEmails.includes(user.email);
 
@@ -671,12 +680,14 @@
       }
     });
 
+    // Edit profile
     editProfileBtn.onclick = () => {
       profileForm.classList.remove("hidden");
       profileDisplay.classList.add("hidden");
       formTitle.textContent = "Edit Employee Profile";
     };
 
+    // Save profile
     profileForm.onsubmit = async (e) => {
       e.preventDefault();
       const user = auth.currentUser;
@@ -708,6 +719,7 @@
           await loadEmployees();
         }
       } catch (err) {
+        console.error("Save error:", err.code, err.message);
         alert("Save error: " + err.message);
       } finally {
         profileSubmitBtn.disabled = false;
@@ -733,6 +745,7 @@
       profileAddress.textContent = p.address || "";
     }
 
+    // Admin search
     searchInput.addEventListener("input", () => loadEmployees());
 
     async function loadEmployees() {
@@ -765,5 +778,3 @@
   </script>
 </body>
 </html>
-
-
